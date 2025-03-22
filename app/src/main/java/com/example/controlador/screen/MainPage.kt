@@ -2,8 +2,8 @@
 
 package com.example.controlador.screen
 
-import android.view.MotionEvent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,7 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -152,7 +152,7 @@ fun TopBar() {
 fun Button(
     direction: String,
     onPress: (String) -> Unit,
-    onRelease: () -> Unit
+    onRelease: (String) -> Unit
 ) {
     val arrowDirection = when (direction) {
         "up" -> Icons.Default.KeyboardArrowUp
@@ -169,18 +169,14 @@ fun Button(
                 DarkGreen,
                 shape = CircleShape
             )
-            .pointerInteropFilter { event ->
-                when (event.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        onPress(direction)  // Cuando se presiona
-                        true
-                    }
-                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                        onRelease()  // Cuando se suelta
-                        true
-                    }
-                    else -> false
-                }
+            .pointerInput(Unit){
+                detectTapGestures(
+                    onPress = {
+                        onPress(direction)
+                        tryAwaitRelease()
+                        onRelease(direction)
+                    },
+                )
             },
         contentAlignment = Alignment.Center
     ) {
@@ -195,10 +191,10 @@ fun Button(
 
 @Composable
 fun Indicators(pressedButton: String) {
-    val colorUp = if ("up" == pressedButton) DarkYellow else Blue
-    val colorDown = if ("down" == pressedButton) DarkYellow else Blue
-    val colorLeft = if ("left" == pressedButton) DarkYellow else Blue
-    val colorRight = if ("right" == pressedButton) DarkYellow else Blue
+    val colorUp = if ("up" in pressedButton) DarkYellow else Blue
+    val colorDown = if ("down" in pressedButton) DarkYellow else Blue
+    val colorLeft = if ("left" in pressedButton) DarkYellow else Blue
+    val colorRight = if ("right" in pressedButton) DarkYellow else Blue
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -238,7 +234,7 @@ fun Indicators(pressedButton: String) {
 
 @Composable
 fun GridButton() {
-    var directionPressed by remember { mutableStateOf("") }
+    var directionsPressed by remember { mutableStateOf(setOf<String>()) }
 
     Row(
         Modifier.fillMaxSize(),
@@ -248,37 +244,35 @@ fun GridButton() {
         Column {
             Button(
                 direction = "up",
-                onPress = { directionPressed = it },
-                onRelease = { directionPressed = "" } // Al soltar, se limpia
+                onPress = { directionsPressed += it},
+                onRelease = { directionsPressed -= it}
             )
             Spacer(Modifier.padding(15.dp))
 
             Button(
                 direction = "down",
-                onPress = { directionPressed = it },
-                onRelease = { directionPressed = "" }
+                onPress = { directionsPressed += it},
+                onRelease = { directionsPressed -= it}
             )
-
-            Text(directionPressed)
         }
         Spacer(Modifier.padding(15.dp))
 
-        Indicators(directionPressed)
+        Indicators(directionsPressed.joinToString(" "))
 
         Spacer(Modifier.padding(15.dp))
 
         Row {
             Button(
                 direction = "left",
-                onPress = { directionPressed = it },
-                onRelease = { directionPressed = "" }
+                onPress = { directionsPressed += it},
+                onRelease = { directionsPressed -= it}
             )
             Spacer(Modifier.padding(15.dp))
 
             Button(
                 direction = "right",
-                onPress = { directionPressed = it },
-                onRelease = { directionPressed = "" }
+                onPress = { directionsPressed += it},
+                onRelease = { directionsPressed -= it}
             )
         }
     }
