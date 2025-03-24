@@ -1,8 +1,8 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@file:OptIn(ExperimentalMaterial3Api::class)
 
 package com.example.controlador.screen
 
-import androidx.compose.foundation.background
+import  androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,9 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,11 +25,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -38,7 +38,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
@@ -135,8 +134,9 @@ fun TopBar() {
                             }
                         },
                         singleLine = true,
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            containerColor = LightGreen
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = DarkYellow,
+                            unfocusedContainerColor = DarkYellow
                         )
                     )
                 }
@@ -157,8 +157,8 @@ fun Button(
     val arrowDirection = when (direction) {
         "up" -> Icons.Default.KeyboardArrowUp
         "down" -> Icons.Default.KeyboardArrowDown
-        "left" -> Icons.Default.KeyboardArrowLeft
-        "right" -> Icons.Default.KeyboardArrowRight
+        "left" -> Icons.AutoMirrored.Filled.KeyboardArrowLeft
+        "right" -> Icons.AutoMirrored.Filled.KeyboardArrowRight
         else -> Icons.Default.KeyboardArrowUp
     }
 
@@ -201,7 +201,7 @@ fun Indicators(pressedButton: String) {
         horizontalArrangement = Arrangement.Center
     ) {
         Icon(
-            imageVector = Icons.Default.KeyboardArrowLeft,
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
             contentDescription = null,
             modifier = Modifier.size(65.dp),
             tint = colorLeft
@@ -224,7 +224,7 @@ fun Indicators(pressedButton: String) {
         }
 
         Icon(
-            imageVector = Icons.Default.KeyboardArrowRight,
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = null,
             modifier = Modifier.size(65.dp),
             tint = colorRight
@@ -233,7 +233,7 @@ fun Indicators(pressedButton: String) {
 }
 
 @Composable
-fun GridButton() {
+fun GridButton()   {
     var directionsPressed by remember { mutableStateOf(setOf<String>()) }
 
     Row(
@@ -255,11 +255,8 @@ fun GridButton() {
                 onRelease = { directionsPressed -= it}
             )
         }
-        Spacer(Modifier.padding(15.dp))
 
         Indicators(directionsPressed.joinToString(" "))
-
-        Spacer(Modifier.padding(15.dp))
 
         Row {
             Button(

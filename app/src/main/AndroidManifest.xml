@@ -2,6 +2,25 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Permisos para Bluetooth en Android 12+ -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+
+    <!-- Permisos para Bluetooth en versiones anteriores (hasta API 30) -->
+    <uses-permission android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"
+        android:maxSdkVersion="30" />
+
+    <!-- Permisos de ubicación para descubrir dispositivos Bluetooth -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"
+        android:maxSdkVersion="30" />
+
+    <!-- Declarar el uso de Bluetooth -->
+    <uses-feature android:name="android.hardware.bluetooth" android:required="true"/>
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="false"/>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -15,7 +34,6 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.Controlador">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
